@@ -1,0 +1,57 @@
+name: build-ffmpeg
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write  # 릴리스 생성/업로드 권한 (GITHUB_TOKEN)
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            vcpkg_installed
+            vcpkg/buildtrees
+            vcpkg/packages
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+
+      - name: Bootstrap vcpkg
+        run: .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Build
+        run: .\scripts\build.ps1
+
+      - name: Package
+        run: .\scripts\package.ps1
+
+      - name: Set KST timestamp
+        shell: bash
+        run: |
+          export TZ=Asia/Seoul
+          echo "STAMP=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+
+      - name: Create Git tag env
+        shell: bash
+        run: |
+          echo "TAG=ffmpeg-7.1.1-x64-windows-elyvian-${STAMP}" >> $GITHUB_ENV
+
+      - name: Create GitHub Release & upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: ${{ env.TAG }}
+          draft: false
+          prerelease: false
+          files: |
+            ffmpeg-7.1.1-x64-windows-elyvian.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

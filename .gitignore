@@ -1,0 +1,4 @@
+.idea
+vcpkg_installed
+artifacts
+*.zip
