@@ -12,9 +12,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
+
+      - name: Setup vcpkg
+        run: |
+          git submodule deinit -f vcpkg
+          Remove-Item -Recurse -Force vcpkg -ErrorAction SilentlyContinue
+          git submodule update --init --recursive
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -25,15 +28,9 @@ jobs:
             vcpkg/buildtrees
             vcpkg/packages
             ~\AppData\Local\vcpkg\archives
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json', 'vcpkg/baseline.json') }}
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             ${{ runner.os }}-vcpkg-
-
-      - name: Fetch vcpkg history
-        run: |
-          cd vcpkg
-          git fetch --unshallow || git fetch
-          cd ..
 
       - name: Bootstrap vcpkg
         run: .\vcpkg\bootstrap-vcpkg.bat
