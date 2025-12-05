@@ -29,6 +29,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-vcpkg-
 
+      - name: Fetch vcpkg history
+        run: |
+          cd vcpkg
+          git fetch --unshallow || git fetch
+          cd ..
+
       - name: Bootstrap vcpkg
         run: .\vcpkg\bootstrap-vcpkg.bat
 
