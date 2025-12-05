@@ -1,7 +1,7 @@
 {
   "name": "ffmpeg-prebuilt-x64-windows",
   "version-string": "7.1.1-x64-windows-elyvian-minimal",
-  "builtin-baseline": "dcf6516bc3c7a763c68a2d0a1d850150223c693a",
+  "builtin-baseline": "80d025e829d71c13e86c2a14c9ce5e02db7de4be",
   "dependencies": [
     {
       "name": "ffmpeg",
