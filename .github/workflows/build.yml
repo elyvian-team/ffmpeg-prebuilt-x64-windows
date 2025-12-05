@@ -20,9 +20,13 @@ jobs:
         with:
           path: |
             vcpkg_installed
+            vcpkg/downloads
             vcpkg/buildtrees
             vcpkg/packages
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+            ~\AppData\Local\vcpkg\archives
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json', 'vcpkg/baseline.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
 
       - name: Bootstrap vcpkg
         run: .\vcpkg\bootstrap-vcpkg.bat
