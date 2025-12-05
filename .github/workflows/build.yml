@@ -12,12 +12,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup vcpkg
-        run: |
-          git submodule deinit -f vcpkg
-          Remove-Item -Recurse -Force vcpkg -ErrorAction SilentlyContinue
-          git submodule update --init --recursive
+        with:
+          submodules: true
 
       - name: Cache vcpkg
         uses: actions/cache@v4
